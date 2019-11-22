@@ -4,6 +4,8 @@ import io.renren.modules.sys.entity.SysUserEntity;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.util.List;
+
 /**
  * 系统用户
  * 
@@ -13,5 +15,10 @@ import org.apache.ibatis.annotations.Mapper;
  */
 @Mapper
 public interface SysUserDao extends BaseMapper<SysUserEntity> {
-	
+    /**
+     * 查询用户所有权限
+     * @param userId
+     * @return
+     */
+    List<String> queryAllPerms(Long userId);
 }

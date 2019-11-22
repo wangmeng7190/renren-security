@@ -1,25 +1,62 @@
 package io.renren.modules.sys.shiro;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import io.renren.common.utils.Constant;
+import io.renren.modules.sys.dao.SysMenuDao;
 import io.renren.modules.sys.dao.SysUserDao;
+import io.renren.modules.sys.entity.SysMenuEntity;
 import io.renren.modules.sys.entity.SysUserEntity;
+import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
 import org.apache.shiro.authz.AuthorizationInfo;
+import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.util.ByteSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+import java.util.*;
+
+@Component
 public class UserRealm extends AuthorizingRealm {
     @Autowired
     private SysUserDao sysUserDao;
+    @Autowired
+    private SysMenuDao sysMenuDao;
 
     //授权
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
+        SysUserEntity user = (SysUserEntity) principals.getPrimaryPrincipal();
+        Long userId = user.getUserId();
 
-        return null;
+        List<String> permsList;
+
+        //系统管理员拥有最高权限
+        if(userId == Constant.SUPER_ADMIN){
+            List<SysMenuEntity> menuList = sysMenuDao.selectList(null);
+            permsList = new ArrayList<>(menuList.size());
+            for(SysMenuEntity menu : menuList){
+                permsList.add(menu.getPerms());
+            }
+        }else{
+            permsList = sysUserDao.queryAllPerms(userId);
+        }
+
+        //用户权限列表
+        Set<String> permsSet = new HashSet<>();
+        for(String perm : permsList){
+            if(StringUtils.isBlank(perm)){
+                continue;
+            }
+            permsSet.addAll(Arrays.asList(perm.trim().split(",")));
+        }
+
+        SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
+        info.setStringPermissions(permsSet);
+        return info;
     }
 
     //认证
