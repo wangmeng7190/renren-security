@@ -2,6 +2,8 @@ package io.renren.modules.sys.service.impl;
 
 import io.renren.common.utils.Query;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 import java.util.Map;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -24,6 +26,12 @@ public class SysUserRoleServiceImpl extends ServiceImpl<SysUserRoleDao, SysUserR
         );
 
         return new PageUtils(page);
+    }
+
+    @Override
+    public List<Long> queryRoleIdList(Long userId) {
+        List<Long> roleIdList = baseMapper.queryRoleIdList(userId);
+        return null;
     }
 
 }

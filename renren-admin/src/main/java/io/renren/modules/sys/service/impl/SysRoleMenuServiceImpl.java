@@ -1,6 +1,8 @@
 package io.renren.modules.sys.service.impl;
 
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 import java.util.Map;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -24,6 +26,12 @@ public class SysRoleMenuServiceImpl extends ServiceImpl<SysRoleMenuDao, SysRoleM
         );
 
         return new PageUtils(page);
+    }
+
+    @Override
+    public List<Long> queryMenyIdList(Long roleId) {
+
+        return baseMapper.queryMenuIdList(roleId);
     }
 
 }

@@ -1,9 +1,12 @@
 package io.renren.modules.sys.controller;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 import io.renren.common.validator.ValidatorUtils;
+import io.renren.modules.sys.service.SysRoleDeptService;
+import io.renren.modules.sys.service.SysRoleMenuService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,9 +31,13 @@ import io.renren.common.utils.R;
  */
 @RestController
 @RequestMapping("sys/sysrole")
-public class SysRoleController {
+public class SysRoleController extends AbstractController{
     @Autowired
     private SysRoleService sysRoleService;
+    @Autowired
+    private SysRoleDeptService sysRoleDeptService;
+    @Autowired
+    private SysRoleMenuService sysRoleMenuService;
 
     /**
      * 列表
@@ -43,6 +50,10 @@ public class SysRoleController {
         return R.ok().put("page", page);
     }
 
+    private R select(){
+        List<SysRoleEntity> list = sysRoleService.list();
+        return R.ok().put("list", list);
+    }
 
     /**
      * 信息
@@ -50,9 +61,17 @@ public class SysRoleController {
     @RequestMapping("/info/{roleId}")
     @RequiresPermissions("sys:sysrole:info")
     public R info(@PathVariable("roleId") Long roleId){
-        SysRoleEntity sysRole = sysRoleService.getById(roleId);
+        SysRoleEntity role = sysRoleService.getById(roleId);
 
-        return R.ok().put("sysRole", sysRole);
+        //查询角色对应的菜单
+        List<Long> menuIdList = sysRoleMenuService.queryMenyIdList(roleId);
+        role.setMenuIdList(menuIdList);
+
+        //查询角色对应的部门
+        List<Long> deptIdList = sysRoleDeptService.queryDeptIdList(new Long[]{roleId});
+        role.setDeptIdList(deptIdList);
+
+        return R.ok().put("role", role);
     }
 
     /**
@@ -61,6 +80,7 @@ public class SysRoleController {
     @RequestMapping("/save")
     @RequiresPermissions("sys:sysrole:save")
     public R save(@RequestBody SysRoleEntity sysRole){
+        ValidatorUtils.validateEntity(sysRole);
         sysRoleService.save(sysRole);
 
         return R.ok();

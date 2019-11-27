@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import io.renren.common.utils.PageUtils;
 import io.renren.modules.sys.entity.SysRoleDeptEntity;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -16,5 +17,12 @@ import java.util.Map;
 public interface SysRoleDeptService extends IService<SysRoleDeptEntity> {
 
     PageUtils queryPage(Map<String, Object> params);
+
+    /**
+     * 根据角色ID，获取部门ID列表
+     * @param longs
+     * @return
+     */
+    List<Long> queryDeptIdList(Long[] longs);
 }
 

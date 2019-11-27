@@ -1,21 +1,24 @@
 package io.renren.modules.sys.controller;
 
-import java.util.Arrays;
-import java.util.Map;
-
-import io.renren.common.validator.ValidatorUtils;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
-import io.renren.modules.sys.entity.SysUserEntity;
-import io.renren.modules.sys.service.SysUserService;
 import io.renren.common.utils.PageUtils;
 import io.renren.common.utils.R;
+import io.renren.common.validator.ValidatorUtils;
+import io.renren.common.validator.group.AddGroup;
+import io.renren.common.validator.group.UpdateGroup;
+import io.renren.modules.sys.entity.SysUserEntity;
+import io.renren.modules.sys.service.SysUserRoleService;
+import io.renren.modules.sys.service.SysUserService;
+import io.renren.modules.sys.shiro.ShiroUtils;
+import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.Assert;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 
 
@@ -28,9 +31,11 @@ import io.renren.common.utils.R;
  */
 @RestController
 @RequestMapping("sys/sysuser")
-public class SysUserController {
+public class SysUserController extends AbstractController {
     @Autowired
     private SysUserService sysUserService;
+    @Autowired
+    private SysUserRoleService sysUserRoleService;
 
     /**
      * 列表
@@ -43,16 +48,42 @@ public class SysUserController {
         return R.ok().put("page", page);
     }
 
+    /**
+     * 获取当前登录的用户信息
+     * @return
+     */
+    public R info(){
+        return R.ok().put("user", getUser());
+    }
+
+    public R password(String password, String newPassword){
+        if(StringUtils.isBlank(newPassword)){
+            return R.error("新密码不能为空");
+        }
+        //原密码
+        password = ShiroUtils.sha256(password, getUser().getSalt());
+        //新密码
+        newPassword = ShiroUtils.sha256(newPassword, getUser().getSalt());
+
+        boolean flag = sysUserService.updatePassword(getUserId(), password, newPassword);
+        if(!flag){
+            return R.error("原密码不正确");
+        }
+        return R.ok();
+    }
 
     /**
-     * 信息
+     * 用户信息
      */
     @RequestMapping("/info/{userId}")
     @RequiresPermissions("sys:sysuser:info")
     public R info(@PathVariable("userId") Long userId){
-        SysUserEntity sysUser = sysUserService.getById(userId);
+        SysUserEntity user = sysUserService.getById(userId);
 
-        return R.ok().put("sysUser", sysUser);
+        //获取用户所属的角色列表
+        List<Long> roleIdList = sysUserRoleService.queryRoleIdList(userId);
+        user.setRoleIdList(roleIdList);
+        return R.ok().put("user", user);
     }
 
     /**
@@ -61,6 +92,7 @@ public class SysUserController {
     @RequestMapping("/save")
     @RequiresPermissions("sys:sysuser:save")
     public R save(@RequestBody SysUserEntity sysUser){
+        ValidatorUtils.validateEntity(sysUser, AddGroup.class);
         sysUserService.save(sysUser);
 
         return R.ok();
@@ -72,7 +104,7 @@ public class SysUserController {
     @RequestMapping("/update")
     @RequiresPermissions("sys:sysuser:update")
     public R update(@RequestBody SysUserEntity sysUser){
-        ValidatorUtils.validateEntity(sysUser);
+        ValidatorUtils.validateEntity(sysUser, UpdateGroup.class);
         sysUserService.updateById(sysUser);
         
         return R.ok();
@@ -84,8 +116,14 @@ public class SysUserController {
     @RequestMapping("/delete")
     @RequiresPermissions("sys:sysuser:delete")
     public R delete(@RequestBody Long[] userIds){
-        sysUserService.removeByIds(Arrays.asList(userIds));
+        if(ArrayUtils.contains(userIds, 1L)){
+            return R.error("超级管理员不能删除");
+        }
+        if(ArrayUtils.contains(userIds, getUserId())){
+            return R.error("不能删除当前登录用户");
+        }
 
+        sysUserService.removeByIds(Arrays.asList(userIds));
         return R.ok();
     }
 

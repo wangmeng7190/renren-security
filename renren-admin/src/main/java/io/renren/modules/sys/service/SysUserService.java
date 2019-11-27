@@ -16,5 +16,7 @@ import java.util.Map;
 public interface SysUserService extends IService<SysUserEntity> {
 
     PageUtils queryPage(Map<String, Object> params);
+
+    boolean updatePassword(Long userId, String password, String newPassword);
 }
 

@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import io.renren.common.utils.PageUtils;
 import io.renren.modules.sys.entity.SysUserRoleEntity;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -16,5 +17,12 @@ import java.util.Map;
 public interface SysUserRoleService extends IService<SysUserRoleEntity> {
 
     PageUtils queryPage(Map<String, Object> params);
+
+    /**
+     * 查询用户有哪些角色
+     * @param userId
+     * @return
+     */
+    List<Long> queryRoleIdList(Long userId);
 }
 
