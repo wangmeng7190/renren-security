@@ -1,5 +1,6 @@
 package io.renren.modules.sys.dao;
 
+import io.renren.modules.sys.entity.SysMenuEntity;
 import io.renren.modules.sys.entity.SysUserEntity;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
@@ -21,4 +22,6 @@ public interface SysUserDao extends BaseMapper<SysUserEntity> {
      * @return
      */
     List<String> queryAllPerms(Long userId);
+
+    List<Long> queryAllMenuId(Long userId);
 }

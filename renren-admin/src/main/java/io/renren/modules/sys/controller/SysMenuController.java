@@ -1,6 +1,7 @@
 package io.renren.modules.sys.controller;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 import io.renren.common.validator.ValidatorUtils;
@@ -28,21 +29,56 @@ import io.renren.common.utils.R;
  */
 @RestController
 @RequestMapping("sys/sysmenu")
-public class SysMenuController {
+public class SysMenuController extends AbstractController{
     @Autowired
     private SysMenuService sysMenuService;
 
     /**
-     * 列表
+     * 当前登录用户所拥有的菜单
+     * @return
+     */
+    @RequestMapping("/nav")
+    public R nav(){
+        List<SysMenuEntity> menuList = sysMenuService.getUserMenuList(getUserId());
+        return R.ok().put("menuList", menuList);
+    }
+
+
+    /**
+     * 所有菜单列表
      */
     @RequestMapping("/list")
     @RequiresPermissions("sys:sysmenu:list")
-    public R list(@RequestParam Map<String, Object> params){
-        PageUtils page = sysMenuService.queryPage(params);
+    public List<SysMenuEntity> list(@RequestParam Map<String, Object> params){
+        List<SysMenuEntity> menuList = sysMenuService.list();
+        for(SysMenuEntity menu : menuList){
+            SysMenuEntity parentMenu = sysMenuService.getById(menu.getParentId());
+            if(parentMenu != null){
+                menu.setParentName(parentMenu.getName());
+            }
+        }
 
-        return R.ok().put("page", page);
+        return menuList;
     }
 
+    /**
+     * 选择菜单
+     * @return
+     */
+    @RequestMapping("/select")
+    @RequiresPermissions("sys:menu:select")
+    public R select(){
+        List<SysMenuEntity> menuList = sysMenuService.queryNotButtonList();
+
+        //添加顶级菜单
+        SysMenuEntity root = new SysMenuEntity();
+        root.setMenuId(0L);
+        root.setName("一级菜单");
+        root.setParentId(-1L);
+        root.setOpen(true);
+        menuList.add(root);
+        return R.ok().put("menuList", menuList);
+    }
 
     /**
      * 信息

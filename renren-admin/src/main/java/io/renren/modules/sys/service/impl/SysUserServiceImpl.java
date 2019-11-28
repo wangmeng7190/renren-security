@@ -1,6 +1,9 @@
 package io.renren.modules.sys.service.impl;
 
+import io.renren.modules.sys.entity.SysMenuEntity;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 import java.util.Map;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -34,6 +37,12 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserDao, SysUserEntity> i
         return this.update(userEntity,
                     new QueryWrapper<SysUserEntity>().eq("user_id", userId).eq("password", password));
 
+    }
+
+    @Override
+    public List<Long> queryAllMenuId(Long userId) {
+
+        return baseMapper.queryAllMenuId(userId);
     }
 
 }
