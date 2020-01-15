@@ -1,5 +1,6 @@
 package io.renren.modules.sys.controller;
 
+import io.renren.common.annotation.SysLog;
 import io.renren.common.utils.PageUtils;
 import io.renren.common.utils.R;
 import io.renren.common.validator.ValidatorUtils;
@@ -30,7 +31,7 @@ import java.util.Map;
  * @date 2019-11-18 22:42:11
  */
 @RestController
-@RequestMapping("sys/sysuser")
+@RequestMapping("sys/user")
 public class SysUserController extends AbstractController {
     @Autowired
     private SysUserService sysUserService;
@@ -52,10 +53,13 @@ public class SysUserController extends AbstractController {
      * 获取当前登录的用户信息
      * @return
      */
+    @RequestMapping("/info")
     public R info(){
         return R.ok().put("user", getUser());
     }
 
+    @SysLog("修改密码")
+    @RequestMapping("/password")
     public R password(String password, String newPassword){
         if(StringUtils.isBlank(newPassword)){
             return R.error("新密码不能为空");

@@ -30,7 +30,7 @@ import io.renren.common.utils.R;
  * @date 2019-11-18 22:42:11
  */
 @RestController
-@RequestMapping("sys/sysrole")
+@RequestMapping("sys/role")
 public class SysRoleController extends AbstractController{
     @Autowired
     private SysRoleService sysRoleService;

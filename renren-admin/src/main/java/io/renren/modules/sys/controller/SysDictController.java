@@ -27,7 +27,7 @@ import io.renren.common.utils.R;
  * @date 2019-11-18 22:41:56
  */
 @RestController
-@RequestMapping("sys/sysdict")
+@RequestMapping("sys/dict")
 public class SysDictController {
     @Autowired
     private SysDictService sysDictService;

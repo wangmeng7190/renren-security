@@ -27,7 +27,7 @@ import io.renren.common.utils.R;
  * @date 2019-11-18 22:42:11
  */
 @RestController
-@RequestMapping("sys/sysdept")
+@RequestMapping("sys/dept")
 public class SysDeptController {
     @Autowired
     private SysDeptService sysDeptService;

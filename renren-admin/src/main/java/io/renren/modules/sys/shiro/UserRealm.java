@@ -8,6 +8,7 @@ import io.renren.modules.sys.entity.SysMenuEntity;
 import io.renren.modules.sys.entity.SysUserEntity;
 import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.authc.*;
+import org.apache.shiro.authc.credential.CredentialsMatcher;
 import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
@@ -70,7 +71,7 @@ public class UserRealm extends AuthorizingRealm {
             throw new UnknownAccountException("账号或密码不正确");
         }
 
-        //账号被锁定
+        //账号被锁定4 = '6' 54
         if(user.getStatus() == 0){
             throw new LockedAccountException("账号已经被锁定，请联系管理员");
         }
@@ -79,10 +80,11 @@ public class UserRealm extends AuthorizingRealm {
         return info;
     }
 
-    public void setCredentialsMatcher(){
-        HashedCredentialsMatcher credentialsMatcher = new HashedCredentialsMatcher();
-        credentialsMatcher.setHashAlgorithmName(ShiroUtils.hashAlgorithmName);
-        credentialsMatcher.setHashIterations(ShiroUtils.hashIterations);
-        super.setCredentialsMatcher(credentialsMatcher);
+    @Override
+    public void setCredentialsMatcher(CredentialsMatcher credentialsMatcher){
+        HashedCredentialsMatcher shaCredentialsMatcher = new HashedCredentialsMatcher();
+        shaCredentialsMatcher.setHashAlgorithmName(ShiroUtils.hashAlgorithmName);
+        shaCredentialsMatcher.setHashIterations(ShiroUtils.hashIterations);
+        super.setCredentialsMatcher(shaCredentialsMatcher);
     }
 }

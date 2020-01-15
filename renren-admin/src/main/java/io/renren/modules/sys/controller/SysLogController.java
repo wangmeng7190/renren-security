@@ -27,7 +27,7 @@ import io.renren.common.utils.R;
  * @date 2019-11-18 22:41:56
  */
 @RestController
-@RequestMapping("sys/syslog")
+@RequestMapping("sys/log")
 public class SysLogController {
     @Autowired
     private SysLogService sysLogService;
