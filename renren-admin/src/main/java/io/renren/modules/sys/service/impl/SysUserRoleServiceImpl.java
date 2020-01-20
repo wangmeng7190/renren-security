@@ -34,4 +34,21 @@ public class SysUserRoleServiceImpl extends ServiceImpl<SysUserRoleDao, SysUserR
         return null;
     }
 
+    @Override
+    public void saveOrUpdate(Long userId, List<Long> roleIdList) {
+        //先删除当前用户与角色的关系
+        this.remove(new QueryWrapper<SysUserRoleEntity>().eq("user_id", userId));
+        if(roleIdList == null || roleIdList.size() == 0){
+            return;
+        }
+
+        //保存用户角色关系
+        for(Long roleId : roleIdList){
+            SysUserRoleEntity sysUserRoleEntity = new SysUserRoleEntity();
+            sysUserRoleEntity.setUserId(userId);
+            sysUserRoleEntity.setRoleId(roleId);
+            this.save(sysUserRoleEntity);
+        }
+    }
+
 }

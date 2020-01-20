@@ -24,5 +24,7 @@ public interface SysUserRoleService extends IService<SysUserRoleEntity> {
      * @return
      */
     List<Long> queryRoleIdList(Long userId);
+
+    void saveOrUpdate(Long userId, List<Long> roleIdList);
 }
 

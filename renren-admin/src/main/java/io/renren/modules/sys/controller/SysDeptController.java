@@ -1,6 +1,8 @@
 package io.renren.modules.sys.controller;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import io.renren.common.validator.ValidatorUtils;
@@ -36,11 +38,11 @@ public class SysDeptController {
      * 列表
      */
     @RequestMapping("/list")
-    @RequiresPermissions("sys:sysdept:list")
-    public R list(@RequestParam Map<String, Object> params){
-        PageUtils page = sysDeptService.queryPage(params);
+    @RequiresPermissions("sys:dept:list")
+    public List<SysDeptEntity> list(){
+        List<SysDeptEntity> list = sysDeptService.queryList(new HashMap<String, Object>());
 
-        return R.ok().put("page", page);
+        return list;
     }
 
 
@@ -48,7 +50,7 @@ public class SysDeptController {
      * 信息
      */
     @RequestMapping("/info/{deptId}")
-    @RequiresPermissions("sys:sysdept:info")
+    @RequiresPermissions("sys:dept:info")
     public R info(@PathVariable("deptId") Long deptId){
         SysDeptEntity sysDept = sysDeptService.getById(deptId);
 
@@ -59,7 +61,7 @@ public class SysDeptController {
      * 保存
      */
     @RequestMapping("/save")
-    @RequiresPermissions("sys:sysdept:save")
+    @RequiresPermissions("sys:dept:save")
     public R save(@RequestBody SysDeptEntity sysDept){
         sysDeptService.save(sysDept);
 
@@ -70,7 +72,7 @@ public class SysDeptController {
      * 修改
      */
     @RequestMapping("/update")
-    @RequiresPermissions("sys:sysdept:update")
+    @RequiresPermissions("sys:dept:update")
     public R update(@RequestBody SysDeptEntity sysDept){
         ValidatorUtils.validateEntity(sysDept);
         sysDeptService.updateById(sysDept);
@@ -82,7 +84,7 @@ public class SysDeptController {
      * 删除
      */
     @RequestMapping("/delete")
-    @RequiresPermissions("sys:sysdept:delete")
+    @RequiresPermissions("sys:dept:delete")
     public R delete(@RequestBody Long[] deptIds){
         sysDeptService.removeByIds(Arrays.asList(deptIds));
 

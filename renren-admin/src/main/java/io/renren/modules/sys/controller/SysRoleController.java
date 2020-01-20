@@ -43,14 +43,20 @@ public class SysRoleController extends AbstractController{
      * 列表
      */
     @RequestMapping("/list")
-    @RequiresPermissions("sys:sysrole:list")
+    @RequiresPermissions("sys:role:list")
     public R list(@RequestParam Map<String, Object> params){
         PageUtils page = sysRoleService.queryPage(params);
 
         return R.ok().put("page", page);
     }
 
-    private R select(){
+    /**
+     * 角色列表
+     * @return
+     */
+    @RequestMapping("/select")
+    @RequiresPermissions("sys:role:select")
+    public R select(){
         List<SysRoleEntity> list = sysRoleService.list();
         return R.ok().put("list", list);
     }
@@ -59,7 +65,7 @@ public class SysRoleController extends AbstractController{
      * 信息
      */
     @RequestMapping("/info/{roleId}")
-    @RequiresPermissions("sys:sysrole:info")
+    @RequiresPermissions("sys:role:info")
     public R info(@PathVariable("roleId") Long roleId){
         SysRoleEntity role = sysRoleService.getById(roleId);
 
@@ -78,7 +84,7 @@ public class SysRoleController extends AbstractController{
      * 保存
      */
     @RequestMapping("/save")
-    @RequiresPermissions("sys:sysrole:save")
+    @RequiresPermissions("sys:role:save")
     public R save(@RequestBody SysRoleEntity sysRole){
         ValidatorUtils.validateEntity(sysRole);
         sysRoleService.save(sysRole);
@@ -90,7 +96,7 @@ public class SysRoleController extends AbstractController{
      * 修改
      */
     @RequestMapping("/update")
-    @RequiresPermissions("sys:sysrole:update")
+    @RequiresPermissions("sys:role:update")
     public R update(@RequestBody SysRoleEntity sysRole){
         ValidatorUtils.validateEntity(sysRole);
         sysRoleService.updateById(sysRole);
@@ -102,7 +108,7 @@ public class SysRoleController extends AbstractController{
      * 删除
      */
     @RequestMapping("/delete")
-    @RequiresPermissions("sys:sysrole:delete")
+    @RequiresPermissions("sys:role:delete")
     public R delete(@RequestBody Long[] roleIds){
         sysRoleService.removeByIds(Arrays.asList(roleIds));
 

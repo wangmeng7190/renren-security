@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import io.renren.common.utils.PageUtils;
 import io.renren.modules.sys.entity.SysDeptEntity;
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -14,7 +16,11 @@ import java.util.Map;
  * @date 2019-11-18 22:42:11
  */
 public interface SysDeptService extends IService<SysDeptEntity> {
-
-    PageUtils queryPage(Map<String, Object> params);
+    /**
+     * 查询列表
+     * @param stringObjectHashMap
+     * @return
+     */
+    List<SysDeptEntity> queryList(Map<String, Object> stringObjectHashMap);
 }
 

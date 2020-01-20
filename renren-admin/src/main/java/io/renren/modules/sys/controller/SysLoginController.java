@@ -65,7 +65,7 @@ public class SysLoginController {
         return R.ok();
     }
 
-    @RequestMapping(value = "/logout", method = RequestMethod.POST)
+    @RequestMapping(value = "/logout", method = RequestMethod.GET)
     public String logout(){
         ShiroUtils.logout();
         return "redirect:login.html";
